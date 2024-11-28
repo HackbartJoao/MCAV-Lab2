@@ -1,3 +1,5 @@
+clear all; close all; clc
+
 % Define symbolic variables
 syms p_x p_y p_z v_x v_y v_z phi theta psi omega_x omega_y omega_z real
 syms T alpha1 alpha2 alpha3 alpha4 beta1 beta2 beta3 beta4 real
@@ -91,42 +93,87 @@ dx = [dp; dv; deuler; domega];
 A_sym = jacobian(dx,x_state);
 B_sym = jacobian(dx,u);
 C_sym = jacobian(x_state,y_t);
-D_sym = 0;
+D_sym = zeros(12,9);
 
-% Define a non-singular operating point
-x_op = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0]; % Example
-u_op = [1000; 0; 0; 0; 0; 0; 0; 0; 0]; % Example thrust and angles
+%% OPERATING POINTS
 
+% OP.1 - a)
+x_op1 = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0];
+u_op1 = [1000; 0; 0; 0; 0; 0; 0; 0; 0];
+A1 = double(subs(A_sym, [x_state; u], [x_op1; u_op1]));
+B1 = double(subs(B_sym, [x_state; u], [x_op1; u_op1]));
+C1 = double(subs(C_sym, [x_state; u], [x_op1; u_op1]));
+D1 = double(subs(D_sym, [x_state; u], [x_op1; u_op1]));
 
-% Evaluate symbolic matrices
-A = double(subs(A_sym, [x_state; u], [x_op; u_op]));
-B = double(subs(B_sym, [x_state; u], [x_op; u_op]));
-C = double(subs(C_sym, [x_state; u], [x_op; u_op]));
-D = double(subs(D_sym, [x_state; u], [x_op; u_op]));
+% OP.1 - b)
+x_op2 = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0];
+u_op2 = [1000; 0; 0; 0; 0; 0; 0; 0; 0];
+A2 = double(subs(A_sym, [x_state; u], [x_op2; u_op2]));
+B2 = double(subs(B_sym, [x_state; u], [x_op2; u_op2]));
+C2 = double(subs(C_sym, [x_state; u], [x_op2; u_op2]));
+D2 = double(subs(D_sym, [x_state; u], [x_op2; u_op2]));
 
+% OP.2 - a)
+x_op3 = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0];
+u_op3 = [1000; 0; 0; 0; 0; 0; 0; 0; 0];
+A3 = double(subs(A_sym, [x_state; u], [x_op3; u_op3]));
+B3 = double(subs(B_sym, [x_state; u], [x_op3; u_op3]));
+C3 = double(subs(C_sym, [x_state; u], [x_op3; u_op3]));
+D3 = double(subs(D_sym, [x_state; u], [x_op3; u_op3]));
+
+% OP.2 - b)
+x_op4 = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0];
+u_op4 = [1000; 0; 0; 0; 0; 0; 0; 0; 0];
+A4 = double(subs(A_sym, [x_state; u], [x_op4; u_op4]));
+B4 = double(subs(B_sym, [x_state; u], [x_op4; u_op4]));
+C4 = double(subs(C_sym, [x_state; u], [x_op4; u_op4]));
+D4 = double(subs(D_sym, [x_state; u], [x_op4; u_op4]));
 
 %% Model Analysis
-E = eig(A(1:4,1:4));
-J = jordan(A);
 
-Mc = [B,  A*B, (A^2)*B, (A^3)*B];
-Mo = [C;  C*A; C*(A^2); C*(A^3)];
+%% OP.1 - a)
+A1_eig = eig(A1);
+A1_jor = jordan(A1);
+Mc1 = [B1,  A1*B1, (A1^2)*B1, (A1^3)*B1];
+Mo1 = [C1;  C1*A1; C1*(A1^2); C1*(A1^3)];
+R_mc1 = rank(Mc1);
+R_mo1 = rank(Mo1);
+sys1 = ss(A1,B1,C1,D1);
+svd1 = svd(sys1(1,1));
+G1 = zpk(tf(sys1));
 
-fprintf('Mc rank:')
-disp(rank(Mc))
-fprintf('Mo rank:')
-disp(rank(Mo))
+%% OP.1 - b)
+A2_eig = eig(A2);
+A2_jor = jordan(A2);
+Mc2 = [B2,  A2*B2, (A2^2)*B2, (A2^3)*B2];
+Mo2 = [C2;  C2*A2; C2*(A2^2); C2*(A2^3)];
+R_mc2 = rank(Mc2);
+R_mo2 = rank(Mo2);
+sys2 = ss(A2,B2,C2,D2);
+svd2 = svd(sys2(1,1));
+G2 = zpk(tf(sys2));
 
-% sys = ss(A,B,C,D);
-% step(sys(1:3,1:3))
+%% OP.2 - a)
+A3_eig = eig(A3);
+A3_jor = jordan(A3);
+Mc3 = [B3,  A3*B3, (A3^2)*B3, (A3^3)*B3];
+Mo3 = [C3;  C3*A3; C3*(A3^2); C3*(A3^3)];
+R_mc3 = rank(Mc3);
+R_mo3 = rank(Mo3);
+sys3 = ss(A3,B3,C3,D3);
+svd3 = svd(sys3(1,1));
+G3 = zpk(tf(sys3));
 
-%% LQR Controller
-% R = 1;
-% Q1 = 2*C'*C;
-% Q2 = 25*C'*C;
-% [K1,S1,P1] = lqr(A,B,Q1,R);
-% sys1 = ss(A-B*K1,B,C,D);
-% step(sys1)
+%% OP.2 - b)
+A4_eig = eig(A4);
+A4_jor = jordan(A4);
+Mc4 = [B4,  A4*B4, (A4^2)*B4, (A4^3)*B4];
+Mo4 = [C4;  C4*A4; C4*(A4^2); C4*(A4^3)];
+R_mc4 = rank(Mc4);
+R_mo4 = rank(Mo4);
+sys4 = ss(A4,B4,C4,D4);
+svd4 = svd(sys4(1,1));
+G4 = zpk(tf(sys4));
 
 %% Helper function for 3D rotation matrices
 function R = rot3D(angle, axis)
