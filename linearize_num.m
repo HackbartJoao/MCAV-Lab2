@@ -108,12 +108,9 @@ D = double(subs(D_sym, [x_state; u], [x_op; u_op]));
 
 %% Model Analysis
 E = eig(A(1:4,1:4));
-% J = jordan(E);
+J = jordan(E);
 
 Mc = [B,  A*B, (A^2)*B, (A^3)*B];
-
-disp(size(A)); % Should be [n, n]
-disp(size(C)); % Should be [p, n]
 Mo = [C;  C*A; C*(A^2); C*(A^3)];
 
 rank(Mc);
