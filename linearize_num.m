@@ -94,8 +94,8 @@ C_sym = jacobian(x_state,y_t);
 D_sym = 0;
 
 % Define a non-singular operating point
-x_op = [0; 0; 0; 0.1; 0.1; 0.1; 0; 0.1; 0; 0; 0; 0]; % Example
-u_op = [1; 0; 0; 0; 0; 0; 0; 0; 0]; % Example thrust and angles
+x_op = [0; 0; -2100; 10; 10; 10; 0; 0; 0; 0; 0; 0]; % Example
+u_op = [1000; 0; 0; 0; 0; 0; 0; 0; 0]; % Example thrust and angles
 
 
 % Evaluate symbolic matrices
@@ -112,12 +112,13 @@ E = eig(A(1:4,1:4));
 Mc = [B,  A*B, (A^2)*B, (A^3)*B];
 Mo = [C;  C*A; C*(A^2); C*(A^3)];
 
-rank(Mc)
-rank(Mo)
+fprintf('Mc rank:')
+disp(rank(Mc))
+fprintf('Mo rank:')
+disp(rank(Mo))
 
-G = ss(A,B,C,D);
-
-
+sys = ss(A,B,C,D);
+G = tf(sys);
 
 
 %% Helper function for 3D rotation matrices
