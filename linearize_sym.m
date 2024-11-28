@@ -1,5 +1,3 @@
-% Corrected Derivatives Calculation for Mars Rover Dynamics
-
 % Define symbolic variables
 syms p_x p_y p_z v_x v_y v_z phi theta psi omega_x omega_y omega_z real
 syms T alpha1 alpha2 alpha3 alpha4 beta1 beta2 beta3 beta4 real
