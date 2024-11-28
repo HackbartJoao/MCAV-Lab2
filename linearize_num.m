@@ -107,7 +107,7 @@ D = double(subs(D_sym, [x_state; u], [x_op; u_op]));
 
 %% Model Analysis
 E = eig(A(1:4,1:4));
-% J = jordan(E);
+J = jordan(A);
 
 Mc = [B,  A*B, (A^2)*B, (A^3)*B];
 Mo = [C;  C*A; C*(A^2); C*(A^3)];
@@ -117,9 +117,16 @@ disp(rank(Mc))
 fprintf('Mo rank:')
 disp(rank(Mo))
 
-sys = ss(A,B,C,D);
-G = tf(sys);
+% sys = ss(A,B,C,D);
+% step(sys(1:3,1:3))
 
+%% LQR Controller
+% R = 1;
+% Q1 = 2*C'*C;
+% Q2 = 25*C'*C;
+% [K1,S1,P1] = lqr(A,B,Q1,R);
+% sys1 = ss(A-B*K1,B,C,D);
+% step(sys1)
 
 %% Helper function for 3D rotation matrices
 function R = rot3D(angle, axis)
