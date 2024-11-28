@@ -1,17 +1,14 @@
 % Define symbolic variables
 syms p_x p_y p_z v_x v_y v_z phi theta psi omega_x omega_y omega_z real
 syms T alpha1 alpha2 alpha3 alpha4 beta1 beta2 beta3 beta4 real
-% syms m g_mars rho_mars A Cd real
-% syms Jxx Jyy Jzz real
-% syms x y z real % Thruster positions
 
-m = 10;           % kg
+
+m = 1050;           % kg
 g_mars = 3.72;    % m/s^2
 rho_mars = 0.02;  % kg/m^3
-A = 0.1;          % m^2
-Cd = 0.5;         % drag coefficient
-Jxx = 1; Jyy = 1.5; Jzz = 2; % kg*m^2
-x = 0.5; y = 0.5; z = 0.5;   % m
+A = 8;          % m^2
+Cd = 1.2;         % drag coefficient
+Jxx = 1750; Jyy = 700; Jzz = 1750; % kg*m^2
 
 % State vector
 x_state = [p_x; p_y; p_z; v_x; v_y; v_z; phi; theta; psi; omega_x; omega_y; omega_z];
@@ -20,7 +17,7 @@ x_state = [p_x; p_y; p_z; v_x; v_y; v_z; phi; theta; psi; omega_x; omega_y; omeg
 u = [T; alpha1; alpha2; alpha3; alpha4; beta1; beta2; beta3; beta4];
 
 % Output vector
-y_t = [p_x; p_y; p_z; v_x; v_y; v_z];
+y_t = [p_x; p_y; p_z; v_x; v_y; v_z; phi; theta; psi; omega_x; omega_y; omega_z];
 
 % Inertia matrix
 J = diag([Jxx, Jyy, Jzz]);
@@ -33,11 +30,13 @@ R = [cos(theta)*cos(psi), sin(phi)*sin(theta)*cos(psi)-cos(phi)*sin(psi), cos(ph
 % Base thrust direction vector
 T_base = [0; 0; -1];
 
-% Define thruster positions (example configuration)
-thruster_positions = [x,  y,  z; 
-                      -x,  y,  z; 
-                       x, -y,  z; 
-                      -x, -y,  z];
+% Define thruster positions
+thruster_positions = [...
+         1,  2, 1;  % Thruster 1 position relative to CM
+        -1,  2, 1;  % Thruster 2
+        -1, -2, 1;  % Thruster 3
+         1, -2, 1   % Thruster 4
+];
 
 % Initialize force and moment vectors
 F_b = sym(zeros(3, 1));
@@ -108,15 +107,15 @@ D = double(subs(D_sym, [x_state; u], [x_op; u_op]));
 
 %% Model Analysis
 E = eig(A(1:4,1:4));
-J = jordan(E);
+% J = jordan(E);
 
 Mc = [B,  A*B, (A^2)*B, (A^3)*B];
 Mo = [C;  C*A; C*(A^2); C*(A^3)];
 
-rank(Mc);
-rank(Mo);
+rank(Mc)
+rank(Mo)
 
-
+G = ss(A,B,C,D);
 
 
 
